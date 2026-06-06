@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中1社会 期末テスト対策</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', 'Yu Gothic UI', 'Meiryo', sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.container {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  width: 100%;
+  max-width: 640px;
+  overflow: hidden;
+}
+
+.header {
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+  color: #fff;
+  padding: 22px 28px;
+  text-align: center;
+}
+
+.header h1 { font-size: 1.5em; margin-bottom: 4px; }
+.header p { font-size: 0.85em; opacity: 0.9; }
+
+.stats {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  padding: 14px 28px;
+  background: #f8f9ff;
+  border-bottom: 1px solid #e8ecf4;
+}
+
+.stat { text-align: center; }
+.stat-value { font-size: 1.7em; font-weight: 700; color: #f5576c; }
+.stat-label { font-size: 0.72em; color: #888; margin-top: 2px; }
+
+.progress-bar { height: 5px; background: #e8ecf4; }
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f093fb, #f5576c);
+  transition: width 0.4s ease;
+  width: 0%;
+}
+
+.content { padding: 28px; }
+
+.category-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.category-btn {
+  padding: 16px 10px;
+  border: 2px solid #e8ecf4;
+  border-radius: 12px;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.category-btn:hover {
+  border-color: #f5576c;
+  background: #fff5f7;
+  transform: translateY(-2px);
+}
+
+.category-btn .emoji { font-size: 1.8em; display: block; margin-bottom: 6px; }
+.category-btn .name { font-weight: 600; color: #333; font-size: 0.85em; }
+.category-btn .count { font-size: 0.72em; color: #999; margin-top: 3px; }
+
+.category-tag {
+  display: inline-block;
+  background: #ffeef2;
+  color: #f5576c;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 0.78em;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.question-number { font-size: 0.82em; color: #aaa; margin-bottom: 6px; }
+
+.question-text {
+  font-size: 1.15em;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.7;
+  margin-bottom: 22px;
+}
+
+.answer-area { display: flex; gap: 10px; }
+
+.answer-input {
+  flex: 1;
+  padding: 13px 16px;
+  border: 2px solid #e0e4ec;
+  border-radius: 12px;
+  font-size: 1.05em;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.answer-input:focus { border-color: #f5576c; }
+
+.submit-btn {
+  padding: 13px 22px;
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.95em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s, opacity 0.2s;
+  white-space: nowrap;
+}
+
+.submit-btn:hover { opacity: 0.9; }
+.submit-btn:active { transform: scale(0.97); }
+
+.result {
+  margin-top: 18px;
+  padding: 16px;
+  border-radius: 12px;
+  text-align: center;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.result.correct { background: #e6f9ee; border: 2px solid #34d399; }
+.result.correct .result-icon { color: #34d399; }
+.result.wrong { background: #fff0f0; border: 2px solid #f87171; }
+.result.wrong .result-icon { color: #f87171; }
+
+.result-icon { font-size: 1.8em; margin-bottom: 4px; }
+.result-text { font-size: 0.95em; color: #333; font-weight: 600; }
+
+.correct-answer { margin-top: 6px; font-size: 1.05em; color: #555; }
+.correct-answer span { color: #f5576c; font-weight: 700; }
+
+.hint-text {
+  margin-top: 6px;
+  font-size: 0.85em;
+  color: #888;
+  line-height: 1.5;
+}
+
+.next-btn {
+  margin-top: 14px;
+  padding: 11px 30px;
+  background: #667eea;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.next-btn:hover { opacity: 0.85; }
+
+.final-score { text-align: center; padding: 18px 0; }
+
+.final-score .big-score {
+  font-size: 3.8em;
+  font-weight: 800;
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.final-score .score-label { font-size: 1.05em; color: #888; margin-top: 4px; }
+.final-score .message { font-size: 1.15em; color: #333; margin-top: 18px; font-weight: 600; }
+
+.final-btns {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.final-btns button {
+  padding: 13px 24px;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.95em;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.retry-btn {
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+  color: #fff;
+}
+
+.back-btn { background: #f0f2f5; color: #555; }
+
+.hidden { display: none !important; }
+
+.review-list { margin-top: 18px; text-align: left; }
+
+.review-item {
+  padding: 12px;
+  border: 1px solid #e8ecf4;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  background: #fafbff;
+}
+
+.review-item .q { font-weight: 600; color: #333; margin-bottom: 4px; font-size: 0.9em; }
+.review-item .a { color: #f5576c; font-weight: 600; font-size: 0.9em; }
+
+.review-toggle {
+  margin-top: 14px;
+  background: none;
+  border: none;
+  color: #667eea;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+.mode-select {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  justify-content: center;
+}
+
+.mode-btn {
+  padding: 10px 20px;
+  border: 2px solid #e8ecf4;
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85em;
+  transition: all 0.2s;
+}
+
+.mode-btn:hover, .mode-btn.active {
+  border-color: #f5576c;
+  background: #fff5f7;
+  color: #f5576c;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>中1社会 期末テスト対策</h1>
+    <p>問題ワークの内容で学習しよう！</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-value" id="correctCount">0</div>
+      <div class="stat-label">正解</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" id="wrongCount">0</div>
+      <div class="stat-label">不正解</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" id="accuracy">--%</div>
+      <div class="stat-label">正答率</div>
+    </div>
+  </div>
+
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <div class="content" id="categoryScreen">
+    <div class="category-grid" id="categoryGrid"></div>
+  </div>
+
+  <div class="content hidden" id="quizScreen">
+    <div class="category-tag" id="categoryTag"></div>
+    <div class="question-number" id="questionNumber"></div>
+    <div class="question-text" id="questionText"></div>
+    <div class="answer-area" id="answerArea">
+      <input type="text" class="answer-input" id="answerInput" placeholder="答えを入力..." autocomplete="off">
+      <button class="submit-btn" id="submitBtn" onclick="checkAnswer()">回答</button>
+    </div>
+    <div class="result hidden" id="resultBox">
+      <div class="result-icon" id="resultIcon"></div>
+      <div class="result-text" id="resultText"></div>
+      <div class="correct-answer" id="correctAnswer"></div>
+      <div class="hint-text" id="hintText"></div>
+      <button class="next-btn" id="nextBtn" onclick="nextQuestion()">次の問題 →</button>
+    </div>
+  </div>
+
+  <div class="content hidden" id="resultScreen">
+    <div class="final-score">
+      <div class="big-score" id="finalScore"></div>
+      <div class="score-label" id="finalLabel"></div>
+      <div class="message" id="finalMessage"></div>
+    </div>
+    <div class="final-btns">
+      <button class="back-btn" onclick="goHome()">カテゴリに戻る</button>
+      <button class="retry-btn" onclick="retryWrong()" id="retryBtn">間違えた問題をやり直す</button>
+    </div>
+    <button class="review-toggle hidden" id="reviewToggle" onclick="toggleReview()">間違えた問題を確認 ▼</button>
+    <div class="review-list hidden" id="reviewList"></div>
+  </div>
+</div>
+
+<script>
+const questions = {
+  "日本の位置と時差": [
+    { q: "日本の西にある大陸は何ですか？", a: ["ユーラシア大陸"] },
+    { q: "日本は世界の6つの州のうち、何という地域に位置しますか？", a: ["東アジア"] },
+    { q: "各国が時刻を決めるときの基準となる経線を何といいますか？", a: ["標準時子午線"] },
+    { q: "地球は24時間で1回転（360度）します。1時間あたり何度回転しますか？", a: ["15度", "15"] },
+    { q: "経度0度の標準時子午線が通るイギリスの天文台がある場所は？", a: ["グリニッジ"] },
+    { q: "日本の標準時子午線は東経何度ですか？", a: ["135度", "135", "東経135度"] },
+    { q: "日本の標準時子午線が通る兵庫県の都市は？", a: ["明石市", "明石"] },
+    { q: "2つの地点の標準時子午線の経度差÷15度で求められるものは？", a: ["時差"] },
+    { q: "日本より時刻が進んでいるのは、日本と日付変更線の間の国で、東と西のどちらですか？", a: ["東"] },
+    { q: "経度15度で時差は何時間生じますか？", a: ["1時間", "1"] },
+    { q: "日付変更線は経度何度の線を基準にしていますか？", a: ["180度", "180"] },
+    { q: "緯度0度の線を何といいますか？", a: ["赤道"] },
+    { q: "北緯・南緯はそれぞれ何度までありますか？", a: ["90度", "90"] },
+    { q: "東経・西経はそれぞれ何度までありますか？", a: ["180度", "180"] },
+    { q: "地球上の陸地と海洋の面積の比率はおよそ何対何ですか？", a: ["3対7", "3:7"] },
+    { q: "ロンドンと東京の時差は何時間ですか？", a: ["9時間", "9"] },
+    { q: "東京が3月10日午後8時のとき、ロンドンは同じ日の何時ですか？（午前/午後も）", a: ["午前11時"] },
+    { q: "ロサンゼルスの標準時子午線は西経何度ですか？", a: ["120度", "西経120度", "120"] },
+    { q: "東京とロサンゼルスの標準時子午線の経度差は何度ですか？", a: ["255度"] },
+    { q: "東京とロサンゼルスの時差は何時間ですか？", a: ["17時間", "17"] },
+  ],
+  "日本の領域": [
+    { q: "日本の国土面積はおよそ何万km²ですか？", a: ["38万", "約38万", "38"] },
+    { q: "日本は北海道・本州・四国・九州の4つの大きな島と、その周辺にある多くの何からなりますか？", a: ["島々", "島"] },
+    { q: "日本の領海は海岸から何海里ですか？", a: ["12海里", "12"] },
+    { q: "日本の排他的経済水域は海岸から何海里ですか？", a: ["200海里", "200"] },
+    { q: "排他的経済水域で管理できる資源を2つ答えなさい（○○資源と○○資源）", a: ["水産資源と鉱産資源"] },
+    { q: "日本の最北端の島は？", a: ["択捉島"] },
+    { q: "日本の最南端の島は？", a: ["沖ノ鳥島"] },
+    { q: "日本の最東端の島は？", a: ["南鳥島"] },
+    { q: "日本の最西端の島は？", a: ["与那国島"] },
+    { q: "ロシアに不法に占拠されている北海道北東の島々を何といいますか？", a: ["北方領土"] },
+    { q: "北方領土に含まれる最も大きい島は？", a: ["択捉島"] },
+    { q: "北方領土に含まれる島で、択捉島の次に大きい島は？", a: ["国後島"] },
+    { q: "北方領土に含まれる、歯舞群島のほかの島は？", a: ["色丹島"] },
+    { q: "韓国が不法に占拠している、島根県に属する島は？", a: ["竹島"] },
+    { q: "沖縄県に属し、日本が有効に支配している諸島は？", a: ["尖閣諸島"] },
+    { q: "沖ノ鳥島が水没すると日本が失うものは何ですか？", a: ["排他的経済水域"] },
+    { q: "日本の領土・領海・領空をまとめて何といいますか？", a: ["領域"] },
+    { q: "領海の外側で、沿岸から200海里以内の水域を何といいますか？", a: ["排他的経済水域"] },
+    { q: "領土の上空を何といいますか？", a: ["領空"] },
+  ],
+  "都道府県と地方区分": [
+    { q: "日本の都道府県の数はいくつですか？", a: ["47", "47都道府県"] },
+    { q: "日本は地方の政治を行っている都道府県の数は、47の都、道、府、県です。都はいくつ？", a: ["1", "1つ"] },
+    { q: "47都道府県のうち「府」はいくつありますか？", a: ["2", "2つ"] },
+    { q: "47都道府県のうち「道」はいくつありますか？", a: ["1", "1つ"] },
+    { q: "47都道府県のうち「県」はいくつありますか？", a: ["43", "43県"] },
+    { q: "日本の7地方区分を答えなさい（最も北の地方）", a: ["北海道地方"] },
+    { q: "日本の7地方区分で、北海道地方の次に北にある地方は？", a: ["東北地方"] },
+    { q: "日本の7地方区分で、最も南にある地方は？", a: ["九州地方"] },
+    { q: "都道府県のうち、面積が最も大きいのは？", a: ["北海道"] },
+    { q: "都道府県のうち、面積が最も小さいのは？", a: ["香川県", "香川"] },
+    { q: "北海道の道庁所在地はどこですか？", a: ["札幌市", "札幌"] },
+    { q: "宮城県の県庁所在地はどこですか？", a: ["仙台市", "仙台"] },
+    { q: "茨城県の県庁所在地はどこですか？", a: ["水戸市", "水戸"] },
+    { q: "栃木県の県庁所在地はどこですか？", a: ["宇都宮市", "宇都宮"] },
+    { q: "群馬県の県庁所在地はどこですか？", a: ["前橋市", "前橋"] },
+    { q: "埼玉県の県庁所在地はどこですか？", a: ["さいたま市", "さいたま"] },
+    { q: "神奈川県の県庁所在地はどこですか？", a: ["横浜市", "横浜"] },
+    { q: "石川県の県庁所在地はどこですか？", a: ["金沢市", "金沢"] },
+    { q: "山梨県の県庁所在地はどこですか？", a: ["甲府市", "甲府"] },
+    { q: "愛知県の県庁所在地はどこですか？", a: ["名古屋市", "名古屋"] },
+    { q: "三重県の県庁所在地はどこですか？", a: ["津市", "津"] },
+    { q: "滋賀県の県庁所在地はどこですか？", a: ["大津市", "大津"] },
+    { q: "兵庫県の県庁所在地はどこですか？", a: ["神戸市", "神戸"] },
+    { q: "島根県の県庁所在地はどこですか？", a: ["松江市", "松江"] },
+    { q: "香川県の県庁所在地はどこですか？", a: ["高松市", "高松"] },
+    { q: "愛媛県の県庁所在地はどこですか？", a: ["松山市", "松山"] },
+    { q: "沖縄県の県庁所在地はどこですか？", a: ["那覇市", "那覇"] },
+    { q: "3つの県が合わさってできた県で、都道府県庁所在地に3つの都市名が含まれるのは何県？", a: ["三重県"] },
+    { q: "本州と北海道を結ぶ海底トンネルの名前は？", a: ["青函トンネル"] },
+    { q: "本州と四国を結ぶ橋をまとめて何といいますか？", a: ["本州四国連絡橋"] },
+  ],
+  "世界の気候": [
+    { q: "赤道付近に広がる、一年中高温で雨が多い気候帯は？", a: ["熱帯"] },
+    { q: "雨が極端に少なく砂漠が広がる気候帯は？", a: ["乾燥帯"] },
+    { q: "四季の変化がはっきりしている気候帯は？", a: ["温帯"] },
+    { q: "冬の寒さが厳しく、タイガとよばれる針葉樹林が広がる気候帯は？", a: ["冷帯", "亜寒帯"] },
+    { q: "一年中寒さが厳しい、北極や南極周辺の気候帯は？", a: ["寒帯"] },
+    { q: "熱帯の気候は、熱帯雨林気候ともう一つは何気候ですか？", a: ["サバナ気候"] },
+    { q: "乾燥帯の気候は、砂漠気候ともう一つは何気候ですか？", a: ["ステップ気候"] },
+    { q: "温帯のうち、夏に乾燥し冬に雨が降る気候は？", a: ["地中海性気候"] },
+    { q: "温帯のうち、一年を通して雨が降り、高緯度のわりに温暖な気候は？", a: ["西岸海洋性気候"] },
+    { q: "温帯のうち、季節風の影響で季節による気温や降水量の変化が大きい気候は？", a: ["温暖湿潤気候"] },
+    { q: "寒帯のうち、短い夏にわずかにコケ類が育つ気候は？", a: ["ツンドラ気候", "ツンドラ"] },
+    { q: "寒帯のうち、一年中氷や雪におおわれている気候は？", a: ["氷雪気候"] },
+    { q: "サバナ気候の特徴として、何と何がはっきり分かれていますか？", a: ["雨季と乾季"] },
+    { q: "熱帯雨林気候の特徴は、一年中高温で何が多いことですか？", a: ["降水量", "雨"] },
+    { q: "ステップ気候では、一年を通して降水量が少なく、短い草が育つ。この草原を何といいますか？", a: ["ステップ"] },
+    { q: "雨温図で、折れ線グラフは月別の何を表していますか？", a: ["気温", "平均気温"] },
+    { q: "雨温図で、棒グラフは月別の何を表していますか？", a: ["降水量"] },
+  ],
+  "寒帯・冷帯の暮らし": [
+    { q: "イヌイットが暮らす、両極に近い地域の気候帯は？", a: ["寒帯"] },
+    { q: "寒帯では、一年の大半が何におおわれていますか？", a: ["雪や氷", "氷や雪", "氷と雪"] },
+    { q: "カナダ北部で、雪のブロックを積み上げて作る住居を何といいますか？", a: ["イグルー"] },
+    { q: "寒帯で見られる大型動物で、そりを引くのに使われる動物は？", a: ["トナカイ", "カリブー"] },
+    { q: "シベリアなど冬の寒さが厳しい気候帯を何といいますか？", a: ["冷帯", "亜寒帯"] },
+    { q: "シベリアに広がる針葉樹の森林を何といいますか？", a: ["タイガ"] },
+    { q: "シベリアの人々が冬の厳しい寒さを防ぐために着る、動物の毛皮で作った厚いコートの特徴は？", a: ["二重にする", "毛皮を二重"] },
+    { q: "シベリアの永久凍土の上に建てられる住居の特徴的な構造は？", a: ["高床", "高床式"] },
+    { q: "永久凍土の上に高床式の住居を建てる理由は？", a: ["建物の熱が地面に伝わるのを防ぐため", "凍土がとけるのを防ぐ"] },
+    { q: "冷帯（亜寒帯）で、冬に川や湖が凍るのを利用して行われる漁を何といいますか？", a: ["氷下漁", "穴釣り"] },
+    { q: "アラスカやカナダ北部など寒帯の人々が現在利用している移動手段は？", a: ["スノーモービル"] },
+  ],
+  "温帯の暮らし": [
+    { q: "温帯で、温度が比較的高く四季の変化がある気候帯に属する都市として、ローマなどがある大陸は？", a: ["ヨーロッパ"] },
+    { q: "地中海性気候では、夏はどのような特徴がありますか？", a: ["乾燥する", "雨が少ない", "高温で乾燥"] },
+    { q: "地中海性気候では、冬はどのような特徴がありますか？", a: ["雨が多い", "温暖で雨が多い"] },
+    { q: "イタリアで特に生産が盛んな農作物を1つ答えなさい", a: ["オリーブ", "ぶどう", "ブドウ"] },
+    { q: "ヨーロッパ南部で見られる、石造りの住居の壁が白い理由は？", a: ["日差しを反射するため", "強い日差しを反射"] },
+    { q: "イタリアの暮らしで、古い町並みが保存されているのは何のためですか？", a: ["観光", "観光資源"] },
+    { q: "大都市よりも農村で食生活の変化が小さいのは、何を大切にしているからですか？", a: ["伝統", "伝統的な食文化"] },
+  ],
+  "乾燥帯の暮らし": [
+    { q: "アフリカ北部に広がる世界最大の砂漠は？", a: ["サハラ砂漠"] },
+    { q: "砂漠の中で、わき水や井戸が利用できる地域を何といいますか？", a: ["オアシス"] },
+    { q: "サハラ砂漠の南に広がり、少し雨が降り、わずかに木や草が生える地域を何といいますか？", a: ["サヘル"] },
+    { q: "乾燥帯で、家畜を連れて草や水を求めて移動する生活を何といいますか？", a: ["遊牧"] },
+    { q: "やぎや羊などの大きさに合わせて草や水を求めて移動する生活様式を何といいますか？", a: ["遊牧"] },
+    { q: "遊牧民が組み立てや解体が簡単にできる移動式の住居に使うのは何ですか？", a: ["テント"] },
+    { q: "サヘル地域で、土地を休ませることなく耕作や放牧を続けた結果起きた問題は？", a: ["砂漠化"] },
+    { q: "乾燥帯の草原で、わずかに雨が降り短い草が生える地域をカタカナで何といいますか？", a: ["ステップ"] },
+    { q: "モンゴルなどの乾燥地域で見られる移動式住居を何といいますか？", a: ["ゲル", "パオ"] },
+  ],
+  "熱帯・高山の暮らし": [
+    { q: "南太平洋にあるサモアなど、一年中高温の気候帯は？", a: ["熱帯"] },
+    { q: "赤道付近に広がるさまざまな動植物が生育する森林を何といいますか？", a: ["熱帯雨林"] },
+    { q: "河口付近や海岸に生育する、特殊な根を持つ木々を何といいますか？", a: ["マングローブ"] },
+    { q: "サモアの人々の主食は何ですか？", a: ["タロいも", "タロ芋"] },
+    { q: "自分たちの食べる食料のほとんどを自分たちで作る生活を漢字4字で何といいますか？", a: ["自給自足"] },
+    { q: "伝統的な文化や自然を守りながら発展することを目指す開発を何といいますか？", a: ["持続可能な開発"] },
+    { q: "ペルーのクスコなど、標高の高い土地の気候を何といいますか？", a: ["高山気候"] },
+    { q: "ペルーの高地を走る山脈は？", a: ["アンデス山脈"] },
+    { q: "ペルーの高地で放牧されている家畜を1つ答えなさい", a: ["リャマ", "アルパカ"] },
+    { q: "ペルーの高地の人々の主食は？", a: ["じゃがいも", "ジャガイモ"] },
+    { q: "マチュピチュなどの遺跡を活用した、近年ペルーで盛んな産業は？", a: ["観光業", "観光"] },
+    { q: "熱帯で沿岸の浅い海に広がる、サンゴが作る地形を何といいますか？", a: ["さんご礁", "サンゴ礁"] },
+  ],
+  "生活文化と宗教": [
+    { q: "世界の住居の主な材料で、日本で多く使われるのは？", a: ["木"] },
+    { q: "ヨーロッパや中東で住居に多く使われる材料は？", a: ["石", "れんが"] },
+    { q: "寒い地域では何で作った防寒着を着ますか？", a: ["毛皮"] },
+    { q: "暑い地域では布などで作った何という特徴の衣服を着ますか？", a: ["風通しのよい", "ゆったりした"] },
+    { q: "現在、世界中の人々に定着している衣服は？", a: ["洋服"] },
+    { q: "食材を長期間くわえておくために、乾燥させたり発酵させたりした食品を何といいますか？", a: ["保存食"] },
+    { q: "ハンバーガーやホットドッグのように、注文してすぐ食べられる手軽な食べ物を何といいますか？", a: ["ファストフード"] },
+    { q: "世界の三大宗教を3つ答えなさい（1つでOK）", a: ["キリスト教", "イスラム教", "仏教", "イスラム"] },
+    { q: "世界で最も信者数が多い宗教は？", a: ["キリスト教"] },
+    { q: "イスラム教の聖典は何ですか？", a: ["クルアーン", "コーラン"] },
+    { q: "イスラム教の信者は1日何回、聖地メッカに向かって礼拝しますか？", a: ["5回", "5"] },
+    { q: "イスラム教の聖地はどこですか？", a: ["メッカ"] },
+    { q: "仏教は中国やどこを通って日本に伝わりましたか？", a: ["朝鮮半島"] },
+    { q: "ヒンドゥー教で聖なる川とされているのは何川ですか？", a: ["ガンジス川", "インダス川"] },
+    { q: "インドのハンバーガーチェーンで牛肉の代わりに使われるものは？", a: ["鶏肉", "チキン"] },
+    { q: "インドで牛肉を食べない理由は、何という宗教で牛が神聖とされているからですか？", a: ["ヒンドゥー教"] },
+    { q: "イスラム教で食べることが禁止されている肉は？", a: ["豚肉"] },
+    { q: "日本のお盆やお彼岸などの年中行事と関係の深い宗教は？", a: ["仏教"] },
+    { q: "金曜日にモスクに行って礼拝する宗教は？", a: ["イスラム教", "イスラム"] },
+    { q: "キリスト教に関わる年中行事で、12月25日に祝われるのは？", a: ["クリスマス"] },
+  ],
+  "全範囲ミックス": [],
+};
+
+const categoryEmojis = {
+  "日本の位置と時差": "🌏",
+  "日本の領域": "🗾",
+  "都道府県と地方区分": "🏯",
+  "世界の気候": "🌤️",
+  "寒帯・冷帯の暮らし": "❄️",
+  "温帯の暮らし": "🌿",
+  "乾燥帯の暮らし": "🏜️",
+  "熱帯・高山の暮らし": "🌴",
+  "生活文化と宗教": "🕌",
+  "全範囲ミックス": "🔥",
+};
+
+let currentCategory = "";
+let currentQuestions = [];
+let currentIndex = 0;
+let correct = 0;
+let wrong = 0;
+let wrongList = [];
+let answered = false;
+
+function init() {
+  const grid = document.getElementById("categoryGrid");
+  grid.innerHTML = "";
+  const cats = Object.keys(questions).filter(c => c !== "全範囲ミックス");
+  for (const cat of cats) {
+    const qs = questions[cat];
+    const btn = document.createElement("div");
+    btn.className = "category-btn";
+    btn.innerHTML = `
+      <span class="emoji">${categoryEmojis[cat] || "📚"}</span>
+      <div class="name">${cat}</div>
+      <div class="count">${qs.length}問</div>
+    `;
+    btn.onclick = () => startQuiz(cat);
+    grid.appendChild(btn);
+  }
+  const totalQ = Object.keys(questions).filter(c => c !== "全範囲ミックス").reduce((s, c) => s + questions[c].length, 0);
+  const allBtn = document.createElement("div");
+  allBtn.className = "category-btn";
+  allBtn.innerHTML = `
+    <span class="emoji">🔥</span>
+    <div class="name">全範囲チャレンジ</div>
+    <div class="count">${totalQ}問</div>
+  `;
+  allBtn.onclick = () => startQuiz("全範囲ミックス");
+  grid.appendChild(allBtn);
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz(category) {
+  currentCategory = category;
+  if (category === "全範囲ミックス") {
+    currentQuestions = shuffle(
+      Object.keys(questions).filter(c => c !== "全範囲ミックス").flatMap(c => questions[c])
+    );
+  } else {
+    currentQuestions = shuffle(questions[category]);
+  }
+  currentIndex = 0;
+  correct = 0;
+  wrong = 0;
+  wrongList = [];
+  answered = false;
+  updateStats();
+  show("quizScreen");
+  showQuestion();
+}
+
+function startQuizWithQuestions(qs, category) {
+  currentCategory = category;
+  currentQuestions = shuffle(qs);
+  currentIndex = 0;
+  correct = 0;
+  wrong = 0;
+  wrongList = [];
+  answered = false;
+  updateStats();
+  show("quizScreen");
+  showQuestion();
+}
+
+function show(screenId) {
+  ["categoryScreen", "quizScreen", "resultScreen"].forEach(id => {
+    document.getElementById(id).classList.toggle("hidden", id !== screenId);
+  });
+}
+
+function showQuestion() {
+  answered = false;
+  const q = currentQuestions[currentIndex];
+  document.getElementById("categoryTag").textContent = currentCategory;
+  document.getElementById("questionNumber").textContent = `第${currentIndex + 1}問 / ${currentQuestions.length}問`;
+  document.getElementById("questionText").textContent = q.q;
+  document.getElementById("answerInput").value = "";
+  document.getElementById("answerArea").classList.remove("hidden");
+  document.getElementById("resultBox").classList.add("hidden");
+  document.getElementById("answerInput").focus();
+  document.getElementById("progressFill").style.width = ((currentIndex / currentQuestions.length) * 100) + "%";
+}
+
+function normalize(s) {
+  return s.replace(/\s+/g, "").replace(/[Ａ-Ｚａ-ｚ０-９]/g, c =>
+    String.fromCharCode(c.charCodeAt(0) - 0xFEE0)
+  ).toLowerCase();
+}
+
+function checkAnswer() {
+  if (answered) return;
+  answered = true;
+  const input = document.getElementById("answerInput").value.trim();
+  const q = currentQuestions[currentIndex];
+  const normalizedInput = normalize(input);
+  const isCorrect = q.a.some(ans => normalize(ans) === normalizedInput);
+
+  const resultBox = document.getElementById("resultBox");
+  const resultIcon = document.getElementById("resultIcon");
+  const resultText = document.getElementById("resultText");
+  const correctAnswerEl = document.getElementById("correctAnswer");
+  const hintEl = document.getElementById("hintText");
+
+  document.getElementById("answerArea").classList.add("hidden");
+  resultBox.classList.remove("hidden", "correct", "wrong");
+  hintEl.textContent = "";
+
+  if (isCorrect) {
+    correct++;
+    resultBox.classList.add("correct");
+    resultIcon.textContent = "⭕";
+    resultText.textContent = "正解！";
+    correctAnswerEl.innerHTML = "";
+  } else {
+    wrong++;
+    wrongList.push(q);
+    resultBox.classList.add("wrong");
+    resultIcon.textContent = "❌";
+    resultText.textContent = input ? "不正解..." : "未回答...";
+    correctAnswerEl.innerHTML = `正解は <span>${q.a[0]}</span> です`;
+    if (q.hint) hintEl.textContent = q.hint;
+  }
+  updateStats();
+}
+
+function nextQuestion() {
+  currentIndex++;
+  if (currentIndex >= currentQuestions.length) {
+    showFinalResult();
+  } else {
+    showQuestion();
+  }
+}
+
+function updateStats() {
+  document.getElementById("correctCount").textContent = correct;
+  document.getElementById("wrongCount").textContent = wrong;
+  const total = correct + wrong;
+  document.getElementById("accuracy").textContent = total > 0 ? Math.round((correct / total) * 100) + "%" : "--%";
+}
+
+function showFinalResult() {
+  show("resultScreen");
+  document.getElementById("progressFill").style.width = "100%";
+  const total = currentQuestions.length;
+  const pct = Math.round((correct / total) * 100);
+  document.getElementById("finalScore").textContent = pct + "%";
+  document.getElementById("finalLabel").textContent = `${correct} / ${total} 問正解`;
+
+  let msg;
+  if (pct === 100) msg = "パーフェクト！すばらしい！🎉";
+  else if (pct >= 80) msg = "とてもよくできました！👏";
+  else if (pct >= 60) msg = "いい調子です！もう少し！💪";
+  else if (pct >= 40) msg = "もう少しがんばろう！📖";
+  else msg = "復習してもう一度チャレンジ！📝";
+  document.getElementById("finalMessage").textContent = msg;
+
+  const retryBtn = document.getElementById("retryBtn");
+  const reviewToggle = document.getElementById("reviewToggle");
+  const reviewList = document.getElementById("reviewList");
+
+  if (wrongList.length > 0) {
+    retryBtn.classList.remove("hidden");
+    reviewToggle.classList.remove("hidden");
+    reviewList.classList.add("hidden");
+    reviewList.innerHTML = wrongList.map(q =>
+      `<div class="review-item"><div class="q">Q. ${q.q}</div><div class="a">A. ${q.a[0]}</div></div>`
+    ).join("");
+  } else {
+    retryBtn.classList.add("hidden");
+    reviewToggle.classList.add("hidden");
+    reviewList.classList.add("hidden");
+  }
+}
+
+function retryWrong() {
+  startQuizWithQuestions([...wrongList], currentCategory + "（復習）");
+}
+
+function toggleReview() {
+  const list = document.getElementById("reviewList");
+  const btn = document.getElementById("reviewToggle");
+  if (list.classList.contains("hidden")) {
+    list.classList.remove("hidden");
+    btn.textContent = "間違えた問題を閉じる ▲";
+  } else {
+    list.classList.add("hidden");
+    btn.textContent = "間違えた問題を確認 ▼";
+  }
+}
+
+function goHome() {
+  correct = 0;
+  wrong = 0;
+  updateStats();
+  document.getElementById("progressFill").style.width = "0%";
+  show("categoryScreen");
+}
+
+document.getElementById("answerInput").addEventListener("keydown", e => {
+  if (e.key === "Enter") checkAnswer();
+});
+
+init();
+</script>
+</body>
+</html>
